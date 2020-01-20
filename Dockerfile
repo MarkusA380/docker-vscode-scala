@@ -9,27 +9,26 @@ ARG SBT_VERSION=1.3.7
 ENV http_proxy "http://httpproxy.munich.munichre.com:3128"
 ENV https_proxy "http://httpproxy.munich.munichre.com:3128"
 
-# === Install sbt ===
-RUN \
-  curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
-  dpkg -i sbt-$SBT_VERSION.deb && \
-  rm sbt-$SBT_VERSION.deb && \
-  apt-get update && \
-  apt-get install sbt && \
-  sbt sbtVersion
+RUN curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb
+RUN dpkg -i sbt-$SBT_VERSION.deb
+RUN rm sbt-$SBT_VERSION.deb
+RUN apt-get update
+RUN apt-get install sbt
 
-# === Install SSH ===
-RUN apt-get update && apt-get install -y openssh-server
+RUN apt-get -y install sbt ca-certificates socat openssh-server supervisor rpl pwgen
 
 RUN mkdir /var/run/sshd
-RUN echo 'root:123456' | chpasswd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+ADD sshd.conf /etc/supervisor/conf.d/sshd.conf
 
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+# Permit root login using password
+RUN rpl "#PermitRootLogin prohibit-password" "PermitRootLogin yes" /etc/ssh/sshd_config
+RUN mkdir /root/.ssh
+RUN chmod o-rwx /root/.ssh
 
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+
+# Called on first run of docker - will run supervisor
+ADD start.sh /start.sh
+RUN chmod 0755 /start.sh
+
+CMD /start.sh
