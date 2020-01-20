@@ -11,6 +11,10 @@ To push:
     
     docker push markusa380/scala-ide:latest
 
-To run locally:
+To run:
 
     docker run -d --name map-scala-ide -v map-scala-ide-project:/root/project/ -p 50022:22 --rm markusa380/scala-ide:latest
+
+To run with persistent extensions:
+
+    docker run -d --name map-scala-ide -v map-scala-ide-project:/root/project/ -v map-scala-ide-extensions:/root/.vscode-server/extensions -p 50022:22 --rm markusa380/scala-ide:latest

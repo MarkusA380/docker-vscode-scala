@@ -30,6 +30,10 @@ RUN rm sbt-$SBT_VERSION.deb
 RUN apt update
 
 RUN apt install -y sbt
+
+# Run sbt so it installs
+RUN sbt sbtVersion
+
 # Install OpenSSH + utils
 RUN apt install -y ca-certificates socat openssh-server
 
@@ -55,6 +59,10 @@ EXPOSE 22
 
 # Add JAVA_HOME variable
 RUN echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> /etc/environment
+
+# TODO: Remove if not required anymore
+RUN echo 'http_proxy="http://httpproxy.munich.munichre.com:3128"' >> /etc/environment
+RUN echo 'http_proxy="http://httpproxy.munich.munichre.com:3128"' >> /etc/environment
 
 # Run start.sh (will start supervisor and OpenSSH server respectively)
 CMD /start.sh
