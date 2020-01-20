@@ -1,22 +1,41 @@
-# This Dockerfile has two required ARGs to determine which base image
-# to use for the JDK and which sbt version to install.
-
-ARG OPENJDK_TAG=8u232
-FROM openjdk:${OPENJDK_TAG}
+FROM debian:buster
 
 ARG SBT_VERSION=1.3.7
 
+# TODO: Remove if not required anymore
 ENV http_proxy "http://httpproxy.munich.munichre.com:3128"
 ENV https_proxy "http://httpproxy.munich.munichre.com:3128"
 
+### Install software
+
+RUN apt update
+# Install supervisor
+RUN apt install -y supervisor
+# Install some utils
+RUN apt install -y rpl pwgen curl
+# Install git
+RUN apt install -y git
+# Install OpenJDK 8 (Warning: If changed, do not forget to update JAVA_HOME below)
+RUN apt install -y openjdk-11-jdk
+
+### Install SBT (added to the repository before)
+
+# Download SBT .deb
 RUN curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb
+# Add SBT .deb to repository
 RUN dpkg -i sbt-$SBT_VERSION.deb
+# Delete SBT .deb
 RUN rm sbt-$SBT_VERSION.deb
-RUN apt-get update
-RUN apt-get install sbt
+# Re-run apt update to be able to install sbt
+RUN apt update
 
-RUN apt-get -y install sbt ca-certificates socat openssh-server supervisor rpl pwgen
+RUN apt install -y sbt
+# Install OpenSSH + utils
+RUN apt install -y ca-certificates socat openssh-server
 
+### Configure OpenSSH
+
+# Create sshd configuration directory & file
 RUN mkdir /var/run/sshd
 ADD sshd.conf /etc/supervisor/conf.d/sshd.conf
 
@@ -25,10 +44,17 @@ RUN rpl "#PermitRootLogin prohibit-password" "PermitRootLogin yes" /etc/ssh/sshd
 RUN mkdir /root/.ssh
 RUN chmod o-rwx /root/.ssh
 
-EXPOSE 22
+### Configure container startup
 
-# Called on first run of docker - will run supervisor
+# Add start.sh & set executable
 ADD start.sh /start.sh
 RUN chmod 0755 /start.sh
 
+# Expose SSH port
+EXPOSE 22
+
+# Add JAVA_HOME variable
+RUN echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> /etc/environment
+
+# Run start.sh (will start supervisor and OpenSSH server respectively)
 CMD /start.sh
