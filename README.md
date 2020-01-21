@@ -1,5 +1,5 @@
 # docker-vscode-scala
-Dockerfile for Visual Studio Code Remote Development via SSH for Scala
+Dockerfile for Visual Studio Code Remote Development via SSH for Scala & SBT
 
 ## Building
 
