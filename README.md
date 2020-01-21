@@ -24,7 +24,7 @@ To push:
         -v map-scala-ide-extensions:/root/.vscode-server/extensions \
         -p 50022:22 \
         --restart unless-stopped \
-        markusa380/scala-ide:latest
+        markusa380/vscode-scala:latest
 
 Note:
 * Replace `map-scala-ide` with custom container name
