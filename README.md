@@ -46,3 +46,7 @@ Note:
 * Replace `localhost` with correct IP
 * Replace `50022` with custom port defined during start
 * Note: You might need to set the environment variables `HTTP_PROXY` and `HTTPS_PROXY` in your container
+
+### Suggested Visual Studio Code extensions
+
+* **[Scala (Metals)](https://marketplace.visualstudio.com/items?itemName=scalameta.metals)** - A lightweight Scala language server
