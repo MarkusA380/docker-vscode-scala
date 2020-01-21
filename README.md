@@ -13,9 +13,10 @@ To push:
 
 
 ## Usage
-### Visual Studio Code Remote - SSH
 
-#### Starting the container
+### Starting the container
+
+To start the container, run the following command from any CLI:
 
     docker run -d \
         --name map-scala-ide \
@@ -27,12 +28,15 @@ To push:
         markusa380/vscode-scala:latest
 
 Note:
+* CMD does not support line breaks. Remove the trailing `\` and run the command as a single line
 * Replace `map-scala-ide` with custom container name
 * Replace `map-scala-ide-project` and `map-scala-ide-extensions` with custom volume names
 * Replace `123456` with custom root password
 * Replace `50022` with custom port
 
-#### Connecting to container
+### Connecting Visual Studio Code to container
+
+In Visual Studio Code, run the command `Remote-SSH: Add new SSH Host...` and enter:
 
     ssh root@localhost -p 50022
 
