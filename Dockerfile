@@ -2,21 +2,17 @@ FROM debian:buster
 
 ARG SBT_VERSION=1.3.7
 
-# TODO: Remove if not required anymore
-ENV http_proxy "http://httpproxy.munich.munichre.com:3128"
-ENV https_proxy "http://httpproxy.munich.munichre.com:3128"
-
 ### Install software
 
-RUN apt update
+RUN apt-get update > /dev/null
 # Install supervisor
-RUN apt install -y supervisor
+RUN apt-get install -y supervisor > /dev/null
 # Install some utils
-RUN apt install -y rpl pwgen curl
+RUN apt-get install -y rpl pwgen curl > /dev/null
 # Install git
-RUN apt install -y git
+RUN apt-get install -y git > /dev/null
 # Install OpenJDK 8 (Warning: If changed, do not forget to update JAVA_HOME below)
-RUN apt install -y openjdk-11-jdk
+RUN apt-get install -y openjdk-11-jdk > /dev/null
 
 ### Install SBT (added to the repository before)
 
@@ -26,16 +22,16 @@ RUN curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_V
 RUN dpkg -i sbt-$SBT_VERSION.deb
 # Delete SBT .deb
 RUN rm sbt-$SBT_VERSION.deb
-# Re-run apt update to be able to install sbt
-RUN apt update
+# Re-run apt-get update to be able to install sbt
+RUN apt-get update > /dev/null
 
-RUN apt install -y sbt
+RUN apt-get install -y sbt > /dev/null
 
-# Run sbt so it installs
+# Run sbt, will run some installation
 RUN sbt sbtVersion
 
 # Install OpenSSH + utils
-RUN apt install -y ca-certificates socat openssh-server
+RUN apt-get install -y ca-certificates openssh-server > /dev/null
 
 ### Configure OpenSSH
 
@@ -57,12 +53,8 @@ RUN chmod 0755 /start.sh
 # Expose SSH port
 EXPOSE 22
 
-# Add JAVA_HOME variable
+# Add JAVA_HOME to /etc/environment so SSH sessions pick it up
 RUN echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> /etc/environment
 
-# TODO: Remove if not required anymore
-RUN echo 'http_proxy="http://httpproxy.munich.munichre.com:3128"' >> /etc/environment
-RUN echo 'http_proxy="http://httpproxy.munich.munichre.com:3128"' >> /etc/environment
-
 # Run start.sh (will start supervisor and OpenSSH server respectively)
-CMD /start.sh
+CMD ["/start.sh"]
