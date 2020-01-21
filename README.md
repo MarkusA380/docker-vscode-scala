@@ -40,6 +40,8 @@ In Visual Studio Code, run the command `Remote-SSH: Add new SSH Host...` and ent
 
     ssh root@localhost -p 50022
 
+Then run the command `Remote-SSH: Connect to Host...`, select the created host and enter the root password configured earlier.
+
 Note:
 * Replace `localhost` with correct IP
 * Replace `50022` with custom port defined during start
