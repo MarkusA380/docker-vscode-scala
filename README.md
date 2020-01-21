@@ -5,13 +5,17 @@ Dockerfile for Visual Studio Code Remote Development via SSH for Scala
 
 To build:
 
-    docker build --tag markusa380/scala-ide:latest --no-cache .
+    docker build --tag markusa380/vscode-scala:latest --no-cache .
 
 To push:
     
-    docker push markusa380/scala-ide:latest
+    docker push markusa380/vscode-scala:latest
 
-To run:
+
+## Usage
+### Visual Studio Code Remote - SSH
+
+#### Starting the container
 
     docker run -d \
         --name map-scala-ide \
@@ -28,11 +32,11 @@ Note:
 * Replace `123456` with custom root password
 * Replace `50022` with custom port
 
-To connect using SSH:
+#### Connecting to container
 
-    ssh root@0.0.0.0 -p 50022
+    ssh root@localhost -p 50022
 
 Note:
-* Replace `0.0.0.0` with correct IP
+* Replace `localhost` with correct IP
 * Replace `50022` with custom port defined during start
 * Note: You might need to set the environment variables `HTTP_PROXY` and `HTTPS_PROXY` in your container
